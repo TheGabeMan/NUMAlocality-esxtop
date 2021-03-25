@@ -6,4 +6,4 @@ Be aware this is just a single snapshot in time and is meant to give you a quick
 
 Read more about NUMA at Frank Denneman's site: <a href=https://numa.af/>NUMA.AF</a>.
 
-My script is based on <a href=https://github.com/lamw/vghetto-scripts/blob/master/powershell/Get-EsxtopAPI.ps1>Get-EsxtopAPI.ps1</a> by <a href=https://www.virtuallyghetto.com/2017/02/using-the-vsphere-api-in-vcenter-server-to-collect-esxtop-vscsistats-metrics.html>William Lam</a>"
+My script is based on <a href=https://github.com/lamw/vghetto-scripts/blob/master/powershell/Get-EsxtopAPI.ps1>Get-EsxtopAPI.ps1</a> by <a href=https://www.virtuallyghetto.com/2017/02/using-the-vsphere-api-in-vcenter-server-to-collect-esxtop-vscsistats-metrics.html>William Lam</a>.
