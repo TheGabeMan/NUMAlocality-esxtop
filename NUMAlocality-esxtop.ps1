@@ -1,5 +1,15 @@
 <#
-.SYNOPSIS Using the vSphere API in vCenter Server to collect ESXTOP & vscsiStats metrics
+.SYNOPSIS 
+Overview of NUMA locality per VM per cluster.
+
+NUMA statistics per VM per cluster. According to Yellow-Bricks the LocalityPct (N%L) should preferably be above 80%.
+With this script we check our environment to see what the LocalityPct (N%L) per VM is.
+
+Be aware this is just a single snapshot in time and is meant to give you a quick glance, based on the assumption 
+that clusters that have all VMs steady above 95% locality, will not turn bad in a few minutes.
+
+Read more about NUMA at Frank Denneman's site: NUMA.AF. My script is based on Get-EsxtopAPI.ps1 by William Lam.
+
 .NOTES Author:       Gabrie van Zanten
 .NOTES Site:         www.GabesVirtualWorld.com
 .NOTES Reference:    https://github.com/TheGabeMan/NUMAlocality-esxtop
