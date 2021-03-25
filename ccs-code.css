@@ -1,0 +1,44 @@
+table
+    {
+    Margin: 0px 0px 0px 4px;
+    Border: 1px solid rgb(190, 190, 190);
+    Font-Family: Tahoma;
+    Font-Size: 8pt;
+    Background-Color: rgb(252, 252, 252);
+}
+
+tr:hover td
+{
+    Background-Color: rgb(0, 127, 195);
+    Color: rgb(255, 255, 255);
+}
+
+tr:nth-child(even)
+{
+    
+}
+
+th
+{
+    Text-Align: center;
+    Color: rgb(150, 150, 220);
+    Padding: 1px 4px 1px 4px;
+}
+
+td
+{
+    Vertical-Align: Top;
+	Text-Align: center;
+    Padding: 1px 4px 1px 4px;
+}
+
+h1
+{
+    Font-Family: Tahoma;
+
+}
+
+p
+{
+    font-family: Tahoma;
+}
