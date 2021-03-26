@@ -7,24 +7,22 @@ table
     Background-Color: rgb(252, 252, 252);
 }
 
+
 tr:hover td
 {
     Background-Color: rgb(0, 127, 195);
     Color: rgb(255, 255, 255);
 }
-
 tr:nth-child(even)
 {
     
 }
-
 th
 {
     Text-Align: center;
     Color: rgb(150, 150, 220);
     Padding: 1px 4px 1px 4px;
 }
-
 td
 {
     Vertical-Align: Top;
@@ -32,13 +30,15 @@ td
     Padding: 1px 4px 1px 4px;
 }
 
-h1
+h1,h3
 {
     Font-Family: Tahoma;
 
 }
 
-p
+p, body
 {
     font-family: Tahoma;
 }
+
+
