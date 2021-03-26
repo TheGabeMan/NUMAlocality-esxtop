@@ -110,13 +110,13 @@ ForEach( $cluster in $ClusterCheck)
 
 }
 
+
 ### From Get-EsxtopNuma we also receive empty lines because of the conversion from data to CSV object.
 ### I filter them out by filtering on vmname -ne $null
 $TotalOverview = $TotalOverview | Where-Object{$_.vmname -ne $null} | Sort-Object vcenter, cluster, esxihost, HomeNodes, vmname
 
-## $TotalOverview  | ft vCenter, cluster, esxihost, VMName, IsNUMAValid, HomeNodes, NumOfBalanceMigrations, NumOfLocalitySwap, NumOfLoadSwap, RemoteMemoryInKB, LocalMemoryInKB, LocalityPct, NumOfNUMANodes
-
-$HTMLPage = "<h1>Overview of NUMA locality</h1>"
+$HTMLPage = ""
+$HTMLPage += "<h1>Overview of NUMA locality</h1>"
 $HTMLPage += "<p>NUMA statistics per VM per cluster. According the <a href=http://www.yellow-bricks.com/esxtop/>Yellow-Bricks</a> the LocalityPct (N%L) should preferably be above 80%.<br>"
 $HTMLPage += "Be aware this is just a single snapshot in time and is meant to give you a quick glance, based on the assumption that clusters that have all VMs steady above 95% locality, will not turn bad in a few minutes.</p>"
 
@@ -125,15 +125,28 @@ ForEach( $cluster in $ClusterList)
 {
     write-host "Cluster: $($cluster.cluster) $($cluster.vcenter)"
 
-    $HTMLVMList = $TotalOverview | where-object{ $_.cluster -eq $($cluster.cluster) } | Sort-Object vmname | ConvertTo-Html -Property esxihost, VMName, IsNUMAValid, HomeNodes, NumOfBalanceMigrations, NumOfLocalitySwap, NumOfLoadSwap, RemoteMemoryInKB, LocalMemoryInKB, LocalityPct, NumOfNUMANodes -PreContent "<h1>Cluster: $($cluster.cluster) - $($cluster.vCenter)</h1>" -as Table
+    $HTMLVMList = $TotalOverview  | select esxihost, VMName, IsNUMAValid, HomeNodes, NumOfBalanceMigrations, NumOfLocalitySwap, NumOfLoadSwap, `
+                                    @{n="RemoteMemoryGB";e={[math]::Round($_.RemoteMemoryInKB/1024/1024,2)}}, @{n="LocalMemoryGB";e={[math]::Round($_.LocalMemoryInKB/1024/1024,2)}}, @{n="LocalityPct";e={($_.LocalityPct -as [int])}}, NumOfNUMANodes |  `
+                                    Where-Object{ $_.LocalityPct -lt 80} | `
+                                    Sort-Object LocalityPct | `
+                                    ConvertTo-Html -Property esxihost, VMName, IsNUMAValid, HomeNodes, NumOfBalanceMigrations, NumOfLocalitySwap, NumOfLoadSwap, RemoteMemoryGB, LocalMemoryGB, LocalityPct, NumOfNUMANodes `
+                                    -PreContent "<h1>Cluster: $($cluster.cluster) - $($cluster.vCenter)</h1><br><h3>VMs with less than 80% locality</h3>" -as Table
     $HTMLPage += $HTMLVMList
-    
+
+    $HTMLVMList = $TotalOverview  | select esxihost, VMName, IsNUMAValid, HomeNodes, NumOfBalanceMigrations, NumOfLocalitySwap, NumOfLoadSwap, `
+                                    @{n="RemoteMemoryGB";e={[math]::Round($_.RemoteMemoryInKB/1024/1024,2)}}, @{n="LocalMemoryGB";e={[math]::Round($_.LocalMemoryInKB/1024/1024,2)}}, @{n="LocalityPct";e={($_.LocalityPct -as [int])}}, NumOfNUMANodes |  `
+                                    Where-Object{ $_.LocalityPct -ge 80} | `
+                                    Sort-Object LocalityPct | `
+                                    ConvertTo-Html -Property esxihost, VMName, IsNUMAValid, HomeNodes, NumOfBalanceMigrations, NumOfLocalitySwap, NumOfLoadSwap, RemoteMemoryGB, LocalMemoryGB, LocalityPct, NumOfNUMANodes `
+                                    -PreContent "<h3>VMs with more than 80% locality</h3>" -as Table
+    $HTMLPage += $HTMLVMList
 }
 $HTMLPage += "<h6>Script is based on <a href=https://github.com/lamw/vghetto-scripts/blob/master/powershell/Get-EsxtopAPI.ps1>Get-EsxtopAPI.ps1</a> by <a href=https://www.virtuallyghetto.com/2017/02/using-the-vsphere-api-in-vcenter-server-to-collect-esxtop-vscsistats-metrics.html>William Lam</a></h6>"
+$HTMLPage += "<h6><a href=https://github.com/TheGabeMan/NUMAlocality-esxtop>NUMAlocality-esxtop</a> by <a href=http://www.gabesvirtualworld.com/find-vm-numa-locality-with-powershell/>Gabrie van Zanten</a></h6>"
 
 $ScriptPath = "H:\"
 $CSSFile = "H:\ccs-code.css"
-convertto-html -body $HTMLPage  -CSSUri $CSSFile | Set-Content $("h:\numa-htmlreport.html")
+convertto-html -body $HTMLPage  -CSSUri $CSSFile -Title "NUMA Locality" | Set-Content $("h:\numa-htmlreport.html")
 Invoke-Expression $("h:\numa-htmlreport.html")
     
 If( !$test)
